@@ -6,157 +6,904 @@
 
     <title>IED Argentina</title>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f3f5f7;
             color: #1f2933;
         }
 
+        /* CABECERA */
+
         header {
-            background-color: #12355b;
+            background: #12355b;
             color: white;
-            padding: 30px;
-            text-align: center;
+            padding: 25px 30px;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: auto;
         }
 
         header h1 {
             margin: 0;
-            font-size: 32px;
+            font-size: 30px;
         }
 
         header p {
-            margin-top: 8px;
-            font-size: 16px;
+            margin: 7px 0 0;
+            opacity: 0.85;
         }
 
+        /* MENU */
+
+        nav {
+            background: #0c2947;
+        }
+
+        nav .nav-content {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            overflow-x: auto;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            background: #1d4d7d;
+        }
+
+        /* CONTENEDOR */
+
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 30px auto;
             padding: 0 20px;
         }
 
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-        }
+        /* INDICADORES */
 
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .card h2 {
+        .section-title {
             margin-top: 0;
             color: #12355b;
         }
 
-        .number {
-            font-size: 30px;
-            font-weight: bold;
-            margin: 15px 0;
-        }
-
-        .menu {
-            margin-top: 35px;
+        .cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            grid-template-columns:
+                repeat(auto-fit, minmax(210px, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
         }
 
-        .menu-item {
+        .card {
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid #ddd;
+            padding: 22px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
+
+        .card-title {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .card-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #12355b;
+        }
+
+        .card-description {
+            margin-top: 8px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        /* SECCIONES */
+
+        section {
+            margin-bottom: 45px;
+            scroll-margin-top: 20px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        /* FILTROS */
+
+        .filters {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #475569;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: white;
+        }
+
+        /* GRAFICO */
+
+        .chart-container {
+            position: relative;
+            height: 380px;
+        }
+
+        /* TABLAS */
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        /* BOTONES */
+
+        .button {
+            display: inline-block;
+            background: #12355b;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 15px;
+        }
+
+        .button:hover {
+            background: #1d4d7d;
+        }
+
+        /* FOOTER */
 
         footer {
-            margin-top: 50px;
-            padding: 20px;
+            background: #0c2947;
+            color: white;
+            padding: 25px;
             text-align: center;
-            color: #666;
+            margin-top: 50px;
+            font-size: 13px;
         }
+
+        /* CELULAR */
+
+        @media (max-width: 600px) {
+
+            header h1 {
+                font-size: 24px;
+            }
+
+            .container {
+                padding: 0 12px;
+            }
+
+            .panel {
+                padding: 18px;
+            }
+
+            .chart-container {
+                height: 280px;
+            }
+
+            th,
+            td {
+                font-size: 13px;
+            }
+
+        }
+
     </style>
 </head>
 
 <body>
 
 <header>
-    <h1>IED ARGENTINA</h1>
-    <p>Sistema de información y análisis de inversión extranjera directa</p>
+
+    <div class="header-content">
+
+        <h1>IED ARGENTINA</h1>
+
+        <p>
+            Sistema de información y análisis
+            de inversión extranjera directa
+        </p>
+
+    </div>
+
 </header>
+
+
+<nav>
+
+    <div class="nav-content">
+
+        <a href="#inicio">Inicio</a>
+
+        <a href="#bcra">
+            📊 Estadísticas BCRA
+        </a>
+
+        <a href="#anuncios">
+            📰 Anuncios
+        </a>
+
+        <a href="#proyectos">
+            🏗️ Proyectos
+        </a>
+
+        <a href="#dashboard">
+            📈 Dashboard
+        </a>
+
+    </div>
+
+</nav>
+
 
 <div class="container">
 
-    <h2>Indicadores principales</h2>
+
+<!-- INICIO -->
+
+<section id="inicio">
+
+    <h2 class="section-title">
+        Indicadores principales
+    </h2>
 
     <div class="cards">
 
         <div class="card">
-            <h2>IED trimestral</h2>
-            <div class="number">USD 1.794 M</div>
-            <p>I trimestre 2026</p>
+
+            <div class="card-title">
+                IED trimestral
+            </div>
+
+            <div class="card-value">
+                USD 1.794 M
+            </div>
+
+            <div class="card-description">
+                I trimestre 2026
+            </div>
+
         </div>
 
-        <div class="card">
-            <h2>Stock de IED</h2>
-            <div class="number">—</div>
-            <p>Último dato disponible</p>
-        </div>
 
         <div class="card">
-            <h2>Países inversores</h2>
-            <div class="number">—</div>
-            <p>Información BCRA</p>
+
+            <div class="card-title">
+                Stock de IED
+            </div>
+
+            <div class="card-value">
+                —
+            </div>
+
+            <div class="card-description">
+                Último dato disponible
+            </div>
+
         </div>
 
+
         <div class="card">
-            <h2>Proyectos</h2>
-            <div class="number">—</div>
-            <p>Base de proyectos</p>
+
+            <div class="card-title">
+                Principales países
+            </div>
+
+            <div class="card-value">
+                —
+            </div>
+
+            <div class="card-description">
+                Información BCRA
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                Proyectos
+            </div>
+
+            <div class="card-value">
+                —
+            </div>
+
+            <div class="card-description">
+                Base de proyectos
+            </div>
+
         </div>
 
     </div>
 
-    <div class="menu">
+</section>
 
-        <div class="menu-item">
-            📊<br><br>
-            <strong>Estadísticas BCRA</strong>
-            <p>IED por período, país y sector</p>
+
+
+<!-- BCRA -->
+
+<section id="bcra">
+
+    <h2 class="section-title">
+        📊 Estadísticas BCRA
+    </h2>
+
+    <div class="panel">
+
+        <div class="filters">
+
+            <div>
+
+                <label>
+                    Año
+                </label>
+
+                <select id="yearFilter">
+
+                    <option value="todos">
+                        Todos
+                    </option>
+
+                    <option value="2024">
+                        2024
+                    </option>
+
+                    <option value="2025">
+                        2025
+                    </option>
+
+                    <option value="2026">
+                        2026
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Variable
+                </label>
+
+                <select>
+
+                    <option>
+                        Flujo de IED
+                    </option>
+
+                    <option>
+                        Posición de IED
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    País
+                </label>
+
+                <select>
+
+                    <option>
+                        Todos
+                    </option>
+
+                    <option>
+                        Estados Unidos
+                    </option>
+
+                    <option>
+                        España
+                    </option>
+
+                    <option>
+                        Brasil
+                    </option>
+
+                    <option>
+                        China
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Sector
+                </label>
+
+                <select>
+
+                    <option>
+                        Todos
+                    </option>
+
+                    <option>
+                        Energía
+                    </option>
+
+                    <option>
+                        Minería
+                    </option>
+
+                    <option>
+                        Industria
+                    </option>
+
+                    <option>
+                        Servicios
+                    </option>
+
+                </select>
+
+            </div>
+
         </div>
 
-        <div class="menu-item">
-            📰<br><br>
-            <strong>Anuncios de inversión</strong>
-            <p>Noticias y anuncios de empresas</p>
-        </div>
 
-        <div class="menu-item">
-            🏗️<br><br>
-            <strong>Proyectos de inversión</strong>
-            <p>Base de proyectos</p>
-        </div>
+        <h3>
+            Evolución trimestral de la IED
+        </h3>
 
-        <div class="menu-item">
-            📈<br><br>
-            <strong>Dashboard</strong>
-            <p>Herramientas de análisis</p>
+
+        <div class="chart-container">
+
+            <canvas id="iedChart"></canvas>
+
         </div>
 
     </div>
+
+</section>
+
+
+
+<!-- ANUNCIOS -->
+
+<section id="anuncios">
+
+    <h2 class="section-title">
+        📰 Anuncios de inversión
+    </h2>
+
+    <div class="panel">
+
+        <input
+            type="text"
+            id="searchAnnouncement"
+            placeholder="Buscar empresa, país, sector o provincia..."
+        >
+
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Empresa
+                    </th>
+
+                    <th>
+                        País
+                    </th>
+
+                    <th>
+                        Sector
+                    </th>
+
+                    <th>
+                        Monto
+                    </th>
+
+                    <th>
+                        Fecha
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="announcementTable">
+
+                <tr>
+
+                    <td>
+                        Empresa demostración
+                    </td>
+
+                    <td>
+                        Estados Unidos
+                    </td>
+
+                    <td>
+                        Energía
+                    </td>
+
+                    <td>
+                        USD 500 M
+                    </td>
+
+                    <td>
+                        2026
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+
+
+<!-- PROYECTOS -->
+
+<section id="proyectos">
+
+    <h2 class="section-title">
+        🏗️ Proyectos de inversión
+    </h2>
+
+    <div class="panel">
+
+        <input
+            type="text"
+            placeholder="Buscar empresa, sector, provincia..."
+        >
+
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Empresa
+                    </th>
+
+                    <th>
+                        País
+                    </th>
+
+                    <th>
+                        Sector
+                    </th>
+
+                    <th>
+                        Provincia
+                    </th>
+
+                    <th>
+                        Monto
+                    </th>
+
+                    <th>
+                        Estado
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                <tr>
+
+                    <td>
+                        Proyecto demostración
+                    </td>
+
+                    <td>
+                        China
+                    </td>
+
+                    <td>
+                        Minería
+                    </td>
+
+                    <td>
+                        Jujuy
+                    </td>
+
+                    <td>
+                        USD 800 M
+                    </td>
+
+                    <td>
+                        Anunciado
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+
+
+<!-- DASHBOARD -->
+
+<section id="dashboard">
+
+    <h2 class="section-title">
+        📈 Dashboard
+    </h2>
+
+
+    <div class="cards">
+
+        <div class="card">
+
+            <div class="card-title">
+                País principal
+            </div>
+
+            <div class="card-value">
+                —
+            </div>
+
+            <div class="card-description">
+                Según IED acumulada
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                Sector principal
+            </div>
+
+            <div class="card-value">
+                —
+            </div>
+
+            <div class="card-description">
+                Según IED acumulada
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                Variación interanual
+            </div>
+
+            <div class="card-value">
+                —
+            </div>
+
+            <div class="card-description">
+                Último trimestre
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                Proyectos activos
+            </div>
+
+            <div class="card-value">
+                —
+            </div>
+
+            <div class="card-description">
+                Base de proyectos
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
 
 </div>
 
+
 <footer>
-    IED Argentina — Sistema de información sobre inversión extranjera directa
+
+    IED Argentina
+
+    <br>
+
+    Sistema de información sobre inversión extranjera directa
+
+    <br><br>
+
+    Datos estadísticos: Banco Central de la República Argentina
+
 </footer>
 
+
+
+<script>
+
+    /*
+     * DATOS DE DEMOSTRACIÓN
+     *
+     * Posteriormente serán reemplazados
+     * por los datos oficiales del BCRA.
+     */
+
+    const labels = [
+        "2024-I",
+        "2024-II",
+        "2024-III",
+        "2024-IV",
+        "2025-I",
+        "2025-II",
+        "2025-III",
+        "2025-IV",
+        "2026-I"
+    ];
+
+
+    const values = [
+        1450,
+        1720,
+        1300,
+        1880,
+        1650,
+        2100,
+        1780,
+        2250,
+        1794
+    ];
+
+
+    const ctx =
+        document
+        .getElementById("iedChart")
+        .getContext("2d");
+
+
+    new Chart(ctx, {
+
+        type: "line",
+
+        data: {
+
+            labels: labels,
+
+            datasets: [{
+
+                label:
+                    "IED trimestral - USD millones",
+
+                data: values,
+
+                borderWidth: 2,
+
+                tension: 0.25,
+
+                fill: false
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+
+                    display: true
+
+                }
+
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    title: {
+
+                        display: true,
+
+                        text: "USD millones"
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+
+</script>
+
+
 </body>
+
 </html>
