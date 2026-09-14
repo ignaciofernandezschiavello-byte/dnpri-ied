@@ -1,572 +1,84 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IED Argentina | Inversión Extranjera Directa</title>
-  <meta name="description" content="Sistema de información y análisis de inversión extranjera directa en Argentina con datos del BCRA." />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="datos_bcra.js"></script>
-  <style>
-    :root{
-      --navy:#0b1f3a;
-      --blue:#163f73;
-      --light:#f5f7fb;
-      --card:#ffffff;
-      --text:#172033;
-      --muted:#667085;
-      --border:#e4e7ec;
-      --green:#027a48;
-      --red:#b42318;
-      --shadow:0 8px 24px rgba(16,24,40,.08);
-      --radius:16px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;
-      background:var(--light);
-      color:var(--text);
-      line-height:1.5;
-    }
-    header{
-      background:linear-gradient(135deg,var(--navy),var(--blue));
-      color:white;
-      padding:22px 0 40px;
-    }
-    .container{width:min(1180px,92%);margin:auto}
-    .topbar{
-      display:flex;
-      justify-content:space-between;
-      gap:20px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-    .brand h1{margin:0;font-size:28px;letter-spacing:.3px}
-    .brand p{margin:4px 0 0;color:#d9e3f0;font-size:14px}
-    nav{display:flex;gap:18px;flex-wrap:wrap}
-    nav a{color:white;text-decoration:none;font-size:14px;opacity:.92}
-    nav a:hover{opacity:1;text-decoration:underline}
-    .hero{
-      margin-top:34px;
-      display:grid;
-      grid-template-columns:1.5fr 1fr;
-      gap:24px;
-      align-items:end;
-    }
-    .hero h2{font-size:38px;line-height:1.1;margin:0 0 12px}
-    .hero p{margin:0;color:#d9e3f0;max-width:720px}
-    .hero-note{
-      background:rgba(255,255,255,.10);
-      border:1px solid rgba(255,255,255,.18);
-      border-radius:14px;
-      padding:16px 18px;
-      font-size:14px;
-    }
-
-    main{padding:28px 0 48px}
-    .toolbar{
-      display:flex;
-      gap:14px;
-      align-items:end;
-      flex-wrap:wrap;
-      background:#fff;
-      border:1px solid var(--border);
-      box-shadow:var(--shadow);
-      padding:18px;
-      border-radius:var(--radius);
-      margin-top:-22px;
-      position:relative;
-      z-index:2;
-    }
-    .field{display:flex;flex-direction:column;gap:6px;min-width:180px}
-    label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-    select{
-      border:1px solid var(--border);
-      border-radius:10px;
-      padding:10px 12px;
-      background:white;
-      color:var(--text);
-      font-size:14px;
-    }
-    .source-pill{
-      margin-left:auto;
-      font-size:13px;
-      color:var(--muted);
-      padding:9px 12px;
-      border-radius:999px;
-      background:#f2f4f7;
-    }
-
-    .section-title{
-      display:flex;
-      align-items:end;
-      justify-content:space-between;
-      gap:20px;
-      margin:30px 0 14px;
-    }
-    .section-title h3{margin:0;font-size:22px}
-    .section-title p{margin:0;color:var(--muted);font-size:13px}
-
-    .cards{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:16px;
-    }
-    .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:18px;
-    }
-    .metric-label{font-size:13px;color:var(--muted);margin-bottom:7px}
-    .metric-value{font-size:27px;font-weight:800;letter-spacing:-.02em}
-    .metric-sub{margin-top:7px;font-size:12px;color:var(--muted)}
-    .positive{color:var(--green)}
-    .negative{color:var(--red)}
-
-    .grid-2{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:16px;
-      margin-top:16px;
-    }
-    .chart-wrap{height:340px}
-    .chart-wrap.small{height:315px}
-
-    .table-card{
-      background:#fff;
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-    .table-header{
-      padding:16px 18px;
-      border-bottom:1px solid var(--border);
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:center;
-    }
-    .table-header h4{margin:0;font-size:16px}
-    .table-scroll{overflow:auto;max-height:430px}
-    table{width:100%;border-collapse:collapse;font-size:14px}
-    th,td{padding:11px 14px;text-align:left;border-bottom:1px solid #eef0f3}
-    th{
-      position:sticky;
-      top:0;
-      background:#f9fafb;
-      color:var(--muted);
-      font-size:12px;
-      text-transform:uppercase;
-      letter-spacing:.03em;
-      z-index:1;
-    }
-    td.num,th.num{text-align:right}
-    .rank{font-weight:700;color:var(--muted);width:42px}
-
-    .info{
-      margin-top:24px;
-      background:#eef4ff;
-      border:1px solid #c7d7fe;
-      border-radius:14px;
-      padding:16px 18px;
-      font-size:13px;
-      color:#344054;
-    }
-    footer{
-      background:#fff;
-      border-top:1px solid var(--border);
-      padding:24px 0;
-      color:var(--muted);
-      font-size:13px;
-    }
-    .error{
-      background:#fff4f2;
-      border:1px solid #fecdca;
-      color:#b42318;
-      padding:14px 16px;
-      border-radius:12px;
-      margin:18px 0;
-      display:none;
-    }
-
-    @media(max-width:900px){
-      .hero{grid-template-columns:1fr}
-      .cards{grid-template-columns:repeat(2,1fr)}
-      .grid-2{grid-template-columns:1fr}
-      .hero h2{font-size:32px}
-      .source-pill{margin-left:0}
-    }
-    @media(max-width:560px){
-      .cards{grid-template-columns:1fr}
-      .brand h1{font-size:23px}
-      .hero h2{font-size:28px}
-      .field{min-width:100%;width:100%}
-      .chart-wrap,.chart-wrap.small{height:290px}
-      .metric-value{font-size:24px}
-    }
-  </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IED Argentina | Inversión Extranjera Directa</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="datos_bcra.js"></script>
+<style>
+:root{--n:#0b1f3a;--b:#163f73;--bg:#f5f7fb;--tx:#172033;--mu:#667085;--bd:#e4e7ec;--g:#027a48;--r:#b42318}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--tx)}
+header{background:linear-gradient(135deg,var(--n),var(--b));color:#fff;padding:24px 0 42px}.c{width:min(1180px,92%);margin:auto}
+.top{display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap}h1{margin:0;font-size:28px}.sub{color:#d9e3f0;font-size:14px;margin-top:5px}
+nav{display:flex;gap:18px;flex-wrap:wrap}nav a{color:#fff;text-decoration:none;font-size:14px}
+.hero{margin-top:32px}.hero h2{font-size:38px;margin:0 0 10px}.hero p{max-width:800px;color:#d9e3f0}
+main{padding:0 0 45px}.tools{display:flex;gap:14px;align-items:end;flex-wrap:wrap;background:#fff;border:1px solid var(--bd);border-radius:16px;padding:18px;margin-top:-22px;box-shadow:0 8px 24px #10182812}
+.field{display:flex;flex-direction:column;gap:6px;min-width:190px}label{font-size:12px;font-weight:700;color:var(--mu);text-transform:uppercase}select{padding:10px 12px;border:1px solid var(--bd);border-radius:10px;background:#fff}
+.source{margin-left:auto;color:var(--mu);font-size:13px}.title{margin:30px 0 14px}.title h3{margin:0;font-size:22px}.title p{margin:5px 0 0;color:var(--mu);font-size:13px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.card,.tablecard{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:18px;box-shadow:0 8px 24px #10182810}
+.ml{font-size:13px;color:var(--mu)}.mv{font-size:27px;font-weight:800;margin-top:7px}.ms{font-size:12px;color:var(--mu);margin-top:7px}.pos{color:var(--g)}.neg{color:var(--r)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.chart{height:340px}.chart.pie{height:390px}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:10px;border-bottom:1px solid #eef0f3;text-align:left}th{font-size:11px;color:var(--mu);text-transform:uppercase}.num{text-align:right}.scroll{overflow:auto;max-height:390px}
+.note{margin-top:14px;padding:13px 15px;border-radius:12px;background:#eef4ff;border:1px solid #c7d7fe;font-size:13px;color:#344054}
+.warn{background:#fffaeb;border-color:#fedf89}.error{display:none;margin:18px 0;background:#fff4f2;border:1px solid #fecdca;color:#b42318;padding:14px;border-radius:12px}
+footer{background:#fff;border-top:1px solid var(--bd);padding:24px 0;color:var(--mu);font-size:13px}
+@media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.source{margin-left:0}.hero h2{font-size:32px}}
+@media(max-width:560px){.cards{grid-template-columns:1fr}.field{width:100%}.hero h2{font-size:28px}}
+</style>
 </head>
 <body>
-<header>
-  <div class="container">
-    <div class="topbar">
-      <div class="brand">
-        <h1>IED ARGENTINA</h1>
-        <p>Sistema de información y análisis de inversión extranjera directa</p>
-      </div>
-      <nav>
-        <a href="#dashboard">Dashboard</a>
-        <a href="#evolucion">Evolución</a>
-        <a href="#paises">Países</a>
-        <a href="#sectores">Sectores</a>
-      </nav>
-    </div>
-    <div class="hero">
-      <div>
-        <h2>Inversión extranjera directa en Argentina</h2>
-        <p>Consulta interactiva de flujos, posición de IED, principales países inversores y sectores receptores sobre la base de información oficial del Banco Central de la República Argentina.</p>
-      </div>
-      <div class="hero-note">
-        <strong>Datos oficiales BCRA</strong><br>
-        Series trimestrales desde 2017. Los indicadores se actualizan automáticamente con el archivo <code>datos_bcra.js</code>.
-      </div>
-    </div>
-  </div>
-</header>
-
-<main>
-  <div class="container">
-    <div id="error" class="error">
-      No fue posible cargar <strong>datos_bcra.js</strong>. Verificá que esté en la misma carpeta que <strong>index.html</strong>.
-    </div>
-
-    <div class="toolbar">
-      <div class="field">
-        <label for="periodo">Período</label>
-        <select id="periodo"></select>
-      </div>
-      <div class="field">
-        <label for="topN">Cantidad en rankings</label>
-        <select id="topN">
-          <option value="5">Top 5</option>
-          <option value="10" selected>Top 10</option>
-          <option value="15">Top 15</option>
-        </select>
-      </div>
-      <div class="source-pill" id="ultimaActualizacion">Fuente: BCRA</div>
-    </div>
-
-    <section id="dashboard">
-      <div class="section-title">
-        <div>
-          <h3>Dashboard</h3>
-          <p>Indicadores principales del período seleccionado.</p>
-        </div>
-      </div>
-      <div class="cards">
-        <div class="card">
-          <div class="metric-label">Flujo trimestral de IED</div>
-          <div class="metric-value" id="mFlujo">—</div>
-          <div class="metric-sub" id="mFlujoSub">Millones de USD</div>
-        </div>
-        <div class="card">
-          <div class="metric-label">Posición de IED</div>
-          <div class="metric-value" id="mStock">—</div>
-          <div class="metric-sub">Millones de USD</div>
-        </div>
-        <div class="card">
-          <div class="metric-label">Capital</div>
-          <div class="metric-value" id="mCapital">—</div>
-          <div class="metric-sub">Posición de capital — millones de USD</div>
-        </div>
-        <div class="card">
-          <div class="metric-label">Deuda</div>
-          <div class="metric-value" id="mDeuda">—</div>
-          <div class="metric-sub">Posición de deuda — millones de USD</div>
-        </div>
-      </div>
-    </section>
-
-    <section id="evolucion">
-      <div class="section-title">
-        <div>
-          <h3>Evolución temporal</h3>
-          <p>Serie trimestral completa disponible en el archivo del BCRA.</p>
-        </div>
-      </div>
-      <div class="grid-2">
-        <div class="card">
-          <div class="metric-label">Flujos trimestrales de IED</div>
-          <div class="chart-wrap"><canvas id="chartFlujos"></canvas></div>
-        </div>
-        <div class="card">
-          <div class="metric-label">Posición de IED</div>
-          <div class="chart-wrap"><canvas id="chartStock"></canvas></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="paises">
-      <div class="section-title">
-        <div>
-          <h3>Principales países inversores</h3>
-          <p>Ranking según posición de IED en el período seleccionado.</p>
-        </div>
-      </div>
-      <div class="grid-2">
-        <div class="card">
-          <div class="metric-label">Posición por país</div>
-          <div class="chart-wrap small"><canvas id="chartPaises"></canvas></div>
-        </div>
-        <div class="table-card">
-          <div class="table-header">
-            <h4>Ranking por país</h4>
-            <span id="periodoPais" class="metric-sub"></span>
-          </div>
-          <div class="table-scroll">
-            <table>
-              <thead>
-                <tr><th>#</th><th>País</th><th class="num">Posición</th><th class="num">Capital</th><th class="num">Deuda</th></tr>
-              </thead>
-              <tbody id="tablaPaises"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="sectores">
-      <div class="section-title">
-        <div>
-          <h3>Principales sectores receptores</h3>
-          <p>Ranking según posición de IED en el período seleccionado.</p>
-        </div>
-      </div>
-      <div class="grid-2">
-        <div class="card">
-          <div class="metric-label">Posición por sector</div>
-          <div class="chart-wrap small"><canvas id="chartSectores"></canvas></div>
-        </div>
-        <div class="table-card">
-          <div class="table-header">
-            <h4>Ranking por sector</h4>
-            <span id="periodoSector" class="metric-sub"></span>
-          </div>
-          <div class="table-scroll">
-            <table>
-              <thead>
-                <tr><th>#</th><th>Sector</th><th class="num">Posición</th><th class="num">Capital</th><th class="num">Deuda</th></tr>
-              </thead>
-              <tbody id="tablaSectores"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <div class="info">
-      <strong>Fuente y metodología.</strong> Datos provenientes del anexo estadístico de Inversión Extranjera Directa del Banco Central de la República Argentina. Valores expresados en millones de dólares estadounidenses. Las series desde 2017 corresponden al Relevamiento de Activos y Pasivos Externos del BCRA.
-    </div>
-  </div>
-</main>
-
-<footer>
-  <div class="container">
-    IED Argentina · Herramienta de consulta y análisis de inversión extranjera directa · Fuente estadística: BCRA
-  </div>
-</footer>
-
+<header><div class="c"><div class="top"><div><h1>IED ARGENTINA</h1><div class="sub">Sistema de información y análisis de inversión extranjera directa</div></div><nav><a href="#dashboard">Dashboard</a><a href="#evolucion">Evolución</a><a href="#paises">Países</a><a href="#sectores">Sectores</a><a href="#composicion">Composición</a></nav></div>
+<div class="hero"><h2>Inversión extranjera directa en Argentina</h2><p>Consulta interactiva de flujos, posición pasiva bruta, países inversores y sectores receptores con información oficial del Banco Central de la República Argentina.</p></div></div></header>
+<main><div class="c">
+<div id="err" class="error">No se pudo cargar <b>datos_bcra.js</b>. Verificá que esté junto a index.html.</div>
+<div class="tools"><div class="field"><label>Período</label><select id="periodo"></select></div><div class="field"><label>Ranking</label><select id="topn"><option>5</option><option selected>10</option><option>15</option></select></div><div class="source" id="src">Fuente: BCRA</div></div>
+<section id="dashboard"><div class="title"><h3>Dashboard</h3><p>Indicadores del período seleccionado, en millones de USD.</p></div><div class="cards">
+<div class="card"><div class="ml">Flujo trimestral de IED</div><div class="mv" id="flujo">—</div><div class="ms">Millones de USD</div></div>
+<div class="card"><div class="ml">Posición pasiva bruta</div><div class="mv" id="stock">—</div><div class="ms">Millones de USD</div></div>
+<div class="card"><div class="ml">Participaciones de capital</div><div class="mv" id="capital">—</div><div class="ms">Millones de USD</div></div>
+<div class="card"><div class="ml">Deuda ID</div><div class="mv" id="deuda">—</div><div class="ms">Millones de USD</div></div>
+</div></section>
+<section id="evolucion"><div class="title"><h3>Evolución temporal</h3><p>Serie trimestral desde 2017.</p></div><div class="grid"><div class="card"><div class="ml">Flujos de IED</div><div class="chart"><canvas id="cf"></canvas></div></div><div class="card"><div class="ml">Posición pasiva bruta</div><div class="chart"><canvas id="cs"></canvas></div></div></div></section>
+<section id="paises"><div class="title"><h3>Principales países inversores</h3><p>Ranking por posición pasiva bruta.</p></div><div class="grid"><div class="card"><div class="chart"><canvas id="cp"></canvas></div></div><div class="tablecard"><div class="scroll"><table><thead><tr><th>#</th><th>País</th><th class="num">Posición</th><th class="num">Capital</th><th class="num">Deuda</th></tr></thead><tbody id="tp"></tbody></table></div></div></div></section>
+<section id="sectores"><div class="title"><h3>Principales sectores receptores</h3><p>Ranking por sector a nivel letra.</p></div><div class="grid"><div class="card"><div class="chart"><canvas id="ct"></canvas></div></div><div class="tablecard"><div class="scroll"><table><thead><tr><th>#</th><th>Sector</th><th class="num">Posición</th><th class="num">Capital</th><th class="num">Deuda</th></tr></thead><tbody id="ts"></tbody></table></div></div></div></section>
+<section id="composicion"><div class="title"><h3>Composición sectorial por país — 1° trimestre de 2026</h3><p>Participación porcentual de los tres principales sectores de cada país y el agregado “Otros”, calculada a partir de “Tabla de datos I”.</p></div>
+<div class="tools" style="margin-top:0"><div class="field" style="min-width:320px"><label>País</label><select id="paispie"></select></div><div class="source" id="pietotal"></div></div>
+<div class="grid" style="margin-top:16px"><div class="card"><div class="chart pie"><canvas id="cpi"></canvas></div></div><div class="card"><div class="ml">Detalle</div><div id="piedetail" style="margin-top:12px"></div><div id="piewarn" class="note warn" style="display:none"></div></div></div>
+</section>
+<div class="note"><b>Fuente:</b> BCRA, Anexo del Informe de Inversión Extranjera Directa. Las series desde 2017 provienen del Relevamiento de Activos y Pasivos Externos. Valores en millones de dólares estadounidenses.</div>
+</div></main><footer><div class="c">IED Argentina · Fuente estadística: Banco Central de la República Argentina</div></footer>
 <script>
-(function(){
-  const D = window.DATOS_BCRA;
-  const error = document.getElementById('error');
-  if (!D) {
-    error.style.display='block';
-    return;
-  }
-
-  const fmt = new Intl.NumberFormat('es-AR', {maximumFractionDigits:1});
-  const fmt0 = new Intl.NumberFormat('es-AR', {maximumFractionDigits:0});
-
-  function num(v){ return typeof v === 'number' && isFinite(v) ? v : 0; }
-  function money(v){ return fmt.format(num(v)); }
-  function quarterLabel(q){
-    if(!q) return '';
-    const [y,t] = q.split('-T');
-    return `${t}° trim. ${y}`;
-  }
-
-  // ---- Periods
-  const periodos = [...new Set(D.totales_trimestrales.map(x=>x.trimestre))].sort();
-  const periodoSel = document.getElementById('periodo');
-  periodos.slice().reverse().forEach(q=>{
-    const o=document.createElement('option');
-    o.value=q; o.textContent=quarterLabel(q);
-    periodoSel.appendChild(o);
-  });
-  const latest = D.metadata?.ultimo_periodo || periodos[periodos.length-1];
-  periodoSel.value = latest;
-  document.getElementById('ultimaActualizacion').textContent =
-    `Fuente: BCRA · último período ${quarterLabel(latest)}`;
-
-  // ---- Charts
-  Chart.defaults.font.family = "Inter, Segoe UI, Roboto, Arial, sans-serif";
-  Chart.defaults.color = "#667085";
-  let cFlujos, cStock, cPaises, cSectores;
-
-  function buildTimeCharts(){
-    const rows = D.totales_trimestrales.slice().sort((a,b)=>a.trimestre.localeCompare(b.trimestre));
-    const labels = rows.map(x=>quarterLabel(x.trimestre));
-
-    cFlujos = new Chart(document.getElementById('chartFlujos'),{
-      type:'line',
-      data:{
-        labels,
-        datasets:[{
-          label:'Flujo de IED',
-          data:rows.map(x=>num(x.flujo_total)),
-          borderWidth:2,
-          pointRadius:2,
-          tension:.25
-        }]
-      },
-      options:{
-        responsive:true, maintainAspectRatio:false,
-        plugins:{legend:{display:false}},
-        scales:{
-          y:{ticks:{callback:v=>fmt0.format(v)}, grid:{color:'#eef0f3'}},
-          x:{grid:{display:false}, ticks:{maxRotation:0, autoSkip:true, maxTicksLimit:12}}
-        }
-      }
-    });
-
-    cStock = new Chart(document.getElementById('chartStock'),{
-      type:'line',
-      data:{
-        labels,
-        datasets:[{
-          label:'Posición de IED',
-          data:rows.map(x=>num(x.stock_posicion)),
-          borderWidth:2,
-          pointRadius:2,
-          tension:.25,
-          fill:false
-        }]
-      },
-      options:{
-        responsive:true, maintainAspectRatio:false,
-        plugins:{legend:{display:false}},
-        scales:{
-          y:{ticks:{callback:v=>fmt0.format(v)}, grid:{color:'#eef0f3'}},
-          x:{grid:{display:false}, ticks:{maxRotation:0, autoSkip:true, maxTicksLimit:12}}
-        }
-      }
-    });
-  }
-
-  function aggregateBy(items, keyField, valueFields){
-    const m = new Map();
-    for(const x of items){
-      const key = (x[keyField] || 'Sin identificar').trim();
-      if(!m.has(key)){
-        const base={[keyField]:key};
-        valueFields.forEach(k=>base[k]=0);
-        m.set(key,base);
-      }
-      const r=m.get(key);
-      valueFields.forEach(k=>r[k]+=num(x[k]));
-    }
-    return [...m.values()];
-  }
-
-  function update(){
-    const q=periodoSel.value;
-    const topN=parseInt(document.getElementById('topN').value,10);
-
-    // Metrics
-    const t = D.totales_trimestrales.find(x=>x.trimestre===q) || {};
-    const flujo = num(t.flujo_total);
-    const mFlujo=document.getElementById('mFlujo');
-    mFlujo.textContent = money(flujo);
-    mFlujo.className='metric-value ' + (flujo<0?'negative':flujo>0?'positive':'');
-    document.getElementById('mStock').textContent = money(t.stock_posicion);
-    document.getElementById('mCapital').textContent = money(t.stock_capital);
-    document.getElementById('mDeuda').textContent = money(t.stock_deuda);
-
-    // Countries
-    const paisRowsRaw = D.posicion_por_pais.filter(x=>x.trimestre===q);
-    const paisRows = aggregateBy(paisRowsRaw,'pais',['posicion','capital','deuda'])
-      .sort((a,b)=>b.posicion-a.posicion)
-      .slice(0,topN);
-
-    document.getElementById('periodoPais').textContent=quarterLabel(q);
-    const tbp=document.getElementById('tablaPaises');
-    tbp.innerHTML='';
-    paisRows.forEach((x,i)=>{
-      const tr=document.createElement('tr');
-      tr.innerHTML=`<td class="rank">${i+1}</td><td>${x.pais}</td><td class="num">${money(x.posicion)}</td><td class="num">${money(x.capital)}</td><td class="num">${money(x.deuda)}</td>`;
-      tbp.appendChild(tr);
-    });
-
-    if(cPaises) cPaises.destroy();
-    cPaises = new Chart(document.getElementById('chartPaises'),{
-      type:'bar',
-      data:{
-        labels:paisRows.map(x=>x.pais),
-        datasets:[{label:'Posición',data:paisRows.map(x=>x.posicion),borderWidth:0}]
-      },
-      options:{
-        indexAxis:'y', responsive:true, maintainAspectRatio:false,
-        plugins:{legend:{display:false}},
-        scales:{
-          x:{ticks:{callback:v=>fmt0.format(v)},grid:{color:'#eef0f3'}},
-          y:{grid:{display:false}}
-        }
-      }
-    });
-
-    // Sectors
-    const secRowsRaw = D.posicion_por_sector.filter(x=>x.trimestre===q);
-    const secRows = aggregateBy(secRowsRaw,'sector',['posicion','capital','deuda'])
-      .sort((a,b)=>b.posicion-a.posicion)
-      .slice(0,topN);
-
-    document.getElementById('periodoSector').textContent=quarterLabel(q);
-    const tbs=document.getElementById('tablaSectores');
-    tbs.innerHTML='';
-    secRows.forEach((x,i)=>{
-      const tr=document.createElement('tr');
-      tr.innerHTML=`<td class="rank">${i+1}</td><td>${x.sector}</td><td class="num">${money(x.posicion)}</td><td class="num">${money(x.capital)}</td><td class="num">${money(x.deuda)}</td>`;
-      tbs.appendChild(tr);
-    });
-
-    if(cSectores) cSectores.destroy();
-    cSectores = new Chart(document.getElementById('chartSectores'),{
-      type:'bar',
-      data:{
-        labels:secRows.map(x=>x.sector),
-        datasets:[{label:'Posición',data:secRows.map(x=>x.posicion),borderWidth:0}]
-      },
-      options:{
-        indexAxis:'y', responsive:true, maintainAspectRatio:false,
-        plugins:{legend:{display:false}},
-        scales:{
-          x:{ticks:{callback:v=>fmt0.format(v)},grid:{color:'#eef0f3'}},
-          y:{grid:{display:false}}
-        }
-      }
-    });
-  }
-
-  buildTimeCharts();
-  periodoSel.addEventListener('change',update);
-  document.getElementById('topN').addEventListener('change',update);
-  update();
+(()=>{
+const D=window.DATOS_BCRA;if(!D){document.getElementById('err').style.display='block';return}
+const fmt=new Intl.NumberFormat('es-AR',{maximumFractionDigits:1});const pct=new Intl.NumberFormat('es-AR',{maximumFractionDigits:2});
+const ql=q=>{let [y,t]=q.split('-T');return `${t}° trim. ${y}`};const f=v=>fmt.format(v||0);
+const per=document.getElementById('periodo');[...D.totales].reverse().forEach(r=>{let o=new Option(ql(r[0]),r[0]);per.add(o)});per.value=D.meta.ultimo;
+document.getElementById('src').textContent=`Fuente: BCRA · último período ${ql(D.meta.ultimo)}`;
+Chart.defaults.font.family="Inter,Segoe UI,Arial,sans-serif";Chart.defaults.color="#667085";
+const labels=D.totales.map(r=>ql(r[0]));
+new Chart(document.getElementById('cf'),{type:'line',data:{labels,datasets:[{data:D.totales.map(r=>r[4]),borderWidth:2,pointRadius:2,tension:.25}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{autoSkip:true,maxTicksLimit:12}}}}});
+new Chart(document.getElementById('cs'),{type:'line',data:{labels,datasets:[{data:D.totales.map(r=>r[1]),borderWidth:2,pointRadius:2,tension:.25}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{autoSkip:true,maxTicksLimit:12}}}}});
+let cp,ct,cpi;
+function update(){
+ let q=per.value,n=+document.getElementById('topn').value,r=D.totales.find(x=>x[0]===q);
+ let mf=document.getElementById('flujo');mf.textContent=f(r[4]);mf.className='mv '+(r[4]<0?'neg':r[4]>0?'pos':'');
+ document.getElementById('stock').textContent=f(r[1]);document.getElementById('capital').textContent=f(r[2]);document.getElementById('deuda').textContent=f(r[3]);
+ let ps=D.paises.filter(x=>x[0]===q).sort((a,b)=>b[2]-a[2]).slice(0,n);
+ document.getElementById('tp').innerHTML=ps.map((x,i)=>`<tr><td>${i+1}</td><td>${x[1]}</td><td class="num">${f(x[2])}</td><td class="num">${f(x[3])}</td><td class="num">${f(x[4])}</td></tr>`).join('');
+ if(cp)cp.destroy();cp=new Chart(document.getElementById('cp'),{type:'bar',data:{labels:ps.map(x=>x[1]),datasets:[{data:ps.map(x=>x[2])}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+ let ss=D.sectores.filter(x=>x[0]===q).sort((a,b)=>b[2]-a[2]).slice(0,n);
+ document.getElementById('ts').innerHTML=ss.map((x,i)=>`<tr><td>${i+1}</td><td>${x[1]}</td><td class="num">${f(x[2])}</td><td class="num">${f(x[3])}</td><td class="num">${f(x[4])}</td></tr>`).join('');
+ if(ct)ct.destroy();ct=new Chart(document.getElementById('ct'),{type:'bar',data:{labels:ss.map(x=>x[1]),datasets:[{data:ss.map(x=>x[2])}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+}
+function pieUpdate(){
+ let c=document.getElementById('paispie').value,p=D.pie_paises_2026T1[c],rows=p.porciones;
+ document.getElementById('pietotal').textContent=`Posición pasiva bruta: USD ${f(p.total)} millones`;
+ document.getElementById('piedetail').innerHTML=rows.map(x=>`<div style="display:flex;justify-content:space-between;gap:15px;padding:10px 0;border-bottom:1px solid #eef0f3"><span>${x[0]}</span><b>${pct.format(x[2])}%</b></div>`).join('');
+ let w=document.getElementById('piewarn');if(p.ajustado_por_valores_negativos){w.style.display='block';w.textContent='Nota metodológica: este país contiene posiciones sectoriales negativas. Como una torta no puede representar valores negativos, los porcentajes del gráfico se calculan sobre los componentes positivos; la posición pasiva bruta total se mantiene informada por separado.'}else w.style.display='none';
+ if(cpi)cpi.destroy();cpi=new Chart(document.getElementById('cpi'),{type:'pie',data:{labels:rows.map(x=>x[0]),datasets:[{data:rows.map(x=>x[2])}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${pct.format(ctx.raw)}%`}}}}});
+}
+let pc=document.getElementById('paispie');Object.keys(D.pie_paises_2026T1).sort((a,b)=>a.localeCompare(b,'es')).forEach(c=>pc.add(new Option(c,c)));
+if(D.pie_paises_2026T1['Estados Unidos De América'])pc.value='Estados Unidos De América';
+per.addEventListener('change',update);document.getElementById('topn').addEventListener('change',update);pc.addEventListener('change',pieUpdate);update();pieUpdate();
 })();
-</script>
-</body>
-</html>
+</script></body></html>
